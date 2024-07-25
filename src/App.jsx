@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 function App() {
   const [passwordLength, setPasswordLength] = useState(6);
@@ -21,20 +22,27 @@ function App() {
     for (let i = 1; i <= passwordLength; i++) {
       password += str.charAt(Math.floor(Math.random() * str.length));
     }
+    if(password===""){
+      toast.error("Please select at least one option")
+    }
     setPassword(password);
   }, [isUpperCase, isLowerCase, isNumber, isSpecialCharacter, passwordLength]);
+  const copyPasswordToClipboard = useCallback(() => {
+    window.navigator.clipboard.writeText(password)
+    toast.success('Successfully Copied!')
+  }, [password])
   useEffect(() => {
     generatePassword();
-  }, [isUpperCase, isLowerCase, isNumber, isSpecialCharacter, passwordLength]);
+  }, [isUpperCase, isLowerCase, isNumber, isSpecialCharacter, passwordLength,generatePassword]);
   return (
     <div className="flex justify-center w-full mt-10">
       <div className="max-w-md w-full m-5 p-5 rounded-md bg-white shadow">
         <div className="w-full my-5">
-          <div className="w-full h-10 flex items-center overflow-hidden px-2 rounded border-[1.5px] bg-gray-100 text-black">
+          <div className="w-full h-10 flex items-center overflow-hidden px-2 rounded border-[1.5px] bg-gray-100 text-black" >
             {password}
-            {password === "" && <p>Select at least one character set</p>}
+            {password === "" && <p>Please select at least one option</p>}
           </div>
-          <button className="w-full h-10 rounded mt-3 flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-500">
+          <button className="w-full h-10 rounded mt-3 flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-500" onClick={copyPasswordToClipboard}>
             Copy
           </button>
         </div>
